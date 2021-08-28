@@ -1,0 +1,26 @@
+{
+  "name": "typescript-gas",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "lint": "eslint 'src/**/*.ts' && prettier --check '**/*.{js,ts,json}'",
+    "lintfix": "eslint --fix 'src/**/*.ts' && prettier --write '**/*.{js,ts,json}'",
+    "test": "jest --watch",
+    "test:ci": "jest --ci",
+    "deploy": "npm run lintfix && clasp push"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/google-apps-script": "^1.0.37",
+    "@types/jest": "^27.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.29.3",
+    "@typescript-eslint/parser": "^4.29.3",
+    "axios": "^0.21.1",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.24.2",
+    "jest": "^27.1.0",
+    "prettier": "^2.3.2",
+    "ts-jest": "^27.0.5"
+  }
+}
