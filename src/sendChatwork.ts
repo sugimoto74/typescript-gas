@@ -3,6 +3,8 @@ const token = "";
 
 // 情報を通知するチャットのルームID
 const roomid = "";
+const url: string = "https://api.chatwork.com/v2/rooms/" + roomid + "/messages";
+const headers: any = { "X-ChatWorkToken": token };
 
 /**
  * Googleフォームから受信するデータ
@@ -16,13 +18,9 @@ export interface GoogleFormInfo {
 
 /**
  * 送信情報
- * token : Chatwork API Token
- * roomid : 情報を通知するチャットのルームID
  * message : 送信データ
  */
 export interface SendInfo {
-  token: string;
-  roomid: string;
   message: string;
 }
 
@@ -31,22 +29,17 @@ export interface SendInfo {
  *
  * Googleフォームからデータを受信してChatworkの特定のルームにメッセージを送信する
  *
- * メッセージ送信は Chatwork Client for Google Apps Script を使用
- * [https://github.com/cw-shibuya/chatwork-client-gas]
- *
  * @param e Googleフォームから受け取った内容
  */
-export function sendChatwork(e: {
-  namedValues: { [x: string]: string };
-}): string {
+export function sendChatwork(e : any): string {
+  let input : GoogleFormInfo = {kind: e.namedValues['お問い合わせ種類'].toString(), text: e.namedValues['問い合わせ内容'].toString()};
   const message = setupSendMessage({
-    kind: e.namedValues["お問い合わせ種類"],
-    text: e.namedValues["問い合わせ内容"],
+    kind: input.kind,
+    text: input.text,
   });
-  //console.log(message);
 
   // Chatworkへ送信
-  return sendMessage({ token: token, roomid: roomid, message: message });
+  return sendMessage({ message: message });
 }
 
 /**
@@ -56,17 +49,18 @@ export function sendChatwork(e: {
  * @return string 送信するメッセージ内容
  */
 export function setupSendMessage(params: GoogleFormInfo): string {
-  let kind = params.kind;
+  console.log(params);
+  const kind: string = params.kind;
+  let message = "";
+
   switch (kind) {
     case "ログインについて":
     case "料金プランについて":
     case "その他のお問い合わせ":
       break;
     default:
-      kind = "該当なし";
+      return message;
   }
-
-  let message = "";
   message += "[info][title]お問い合わせ[/title]";
   message += "お問い合わせ種類: " + kind + "\n";
   message += "問い合わせ内容: " + params.text + "\n";
@@ -92,21 +86,29 @@ export function setupSendMessage(params: GoogleFormInfo): string {
  *    "errors":["Invalid Endpoint or HTTP method"]
  *  }
  *
- *  https://developer.chatwork.com/ja/endpoint_rooms.html#POST-rooms-room_id-messages
  */
 export function sendMessage(params: SendInfo): string {
   let res = "";
+  let result;
   try {
-    const cwclient = ChatWorkClient.factory({ token: params.token });
-    console.log(cwclient);
-    res = cwclient.sendMessage({
-      room_id: params.roomid,
+    const post_data = {
       body: params.message,
-    });
-    console.log(res);
+    };
+    const options: any = {
+      method: "post",
+      headers: headers,
+      payload: post_data || {},
+    };
+    result = UrlFetchApp.fetch(url, options);
+
+    // リクエストに成功していたら結果を解析して返す
+    if (result.getResponseCode() == 200) {
+      res = JSON.parse(result.getContentText());
+      console.log("result: " + res);
+    }
   } catch (error) {
-    console.log(error);
-    res = error;
+    console.log("error : " + error);
+    res = <string>error;
   }
   return res;
 }

@@ -1,15 +1,12 @@
-import { sendChatwork, setupSendMessage } from "./sendChatwork";
+import { sendChatwork, setupSendMessage, sendMessage } from "./sendChatwork";
 
+/*
 describe(sendChatwork, () => {
-  /* sendChatwork */
-  /* ToDo: ChatWorkClientがGoogle Apps Script Libraryの為 */
-  /* Jest実施時はMock化 or 一部コメントアウトする or 実環境での確認が必要 */
   it("sendChatwork 要素あり", () => {
     const result = sendChatwork({
       namedValues: {
-        お問い合わせ種類: "ログインについて",
-        問い合わせ内容: "問い合わせ内容本文",
-      },
+        お問い合わせ種類: [ 'ログインについて' ],
+        問い合わせ内容: [ '2210' ] }
     });
 
     expect(result).toBe("");
@@ -17,7 +14,9 @@ describe(sendChatwork, () => {
 
   it("sendChatwork GoogleFormから異常データインプット　要素あり　空文字", () => {
     const result = sendChatwork({
-      namedValues: { お問い合わせ種類: "", 問い合わせ内容: "" },
+      namedValues: {
+      お問い合わせ種類: [ '' ],
+      問い合わせ内容: [ '' ] }
     });
 
     expect(result).toBe("");
@@ -25,7 +24,7 @@ describe(sendChatwork, () => {
 
   it("sendChatwork GoogleFormから異常データインプット　要素　お問い合わせ種類のみ", () => {
     const result = sendChatwork({
-      namedValues: { お問い合わせ種類: "ログインについて" },
+      namedValues: { お問い合わせ種類: [ 'ログインについて' ]},
     });
 
     expect(result).toBe("");
@@ -33,15 +32,15 @@ describe(sendChatwork, () => {
 
   it("sendChatwork GoogleFormから異常データインプット　要素　問い合わせ内容のみ", () => {
     const result = sendChatwork({
-      namedValues: { 問い合わせ内容: "問い合わせ内容本文" },
+      namedValues: { 問い合わせ内容: [ '問い合わせ内容本文' ]},
     });
 
     expect(result).toBe("");
   });
 });
+*/
 
 describe(setupSendMessage, () => {
-  /* setupSendMessage */
   it("setupSendMessage ログインについてパターン", () => {
     const result = setupSendMessage({
       kind: "ログインについて",
@@ -81,9 +80,7 @@ describe(setupSendMessage, () => {
       text: "問い合わせ内容本文",
     });
 
-    expect(result).toBe(
-      "[info][title]お問い合わせ[/title]お問い合わせ種類: 該当なし\n問い合わせ内容: 問い合わせ内容本文\n[/info]"
-    );
+    expect(result).toBe("");
   });
 
   it("setupSendMessage GoogleFormから異常データインプット お問い合わせ種類 該当なしパターン", () => {
@@ -92,27 +89,23 @@ describe(setupSendMessage, () => {
       text: "問い合わせ内容本文",
     });
 
-    expect(result).toBe(
-      "[info][title]お問い合わせ[/title]お問い合わせ種類: 該当なし\n問い合わせ内容: 問い合わせ内容本文\n[/info]"
-    );
+    expect(result).toBe("");
   });
 
   it("setupSendMessage GoogleFormから異常データインプット パラメータが空文字パターン", () => {
     const result = setupSendMessage({ kind: "", text: "" });
 
-    expect(result).toBe(
-      "[info][title]お問い合わせ[/title]お問い合わせ種類: 該当なし\n問い合わせ内容: \n[/info]"
-    );
+    expect(result).toBe("");
+  });
+});
+
+/*
+describe(setupSendMessage, () => {
+  it("sendMessagge ", () => {
+    const res = sendMessage({token: "token", roomid: "roomid", message: "message"});
+
+    expect(res).toBe("");
   });
 
-  /*
-    ToDo: ChatWorkClientがGoogle Apps Script Libraryの為
-    Jest実施時はMock化 or 一部コメントアウトする or 実環境での確認が必要
-    Token不正、RoomIDなしは実際にサーバに送信して確認を実施
-    it("sendMessagge ", () => {
-      const res = sendMessagge({token: "token", roomid: "roomid", message: "message"});
-
-      expect(res).toBe("");
-    });
-  */
 });
+*/
