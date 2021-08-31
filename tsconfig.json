@@ -3,6 +3,7 @@
     "lib": ["esnext"],
     "experimentalDecorators": true,
     "strict": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "esModuleInterop": true
   }
 }
