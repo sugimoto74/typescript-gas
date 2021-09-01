@@ -1,23 +1,29 @@
-import { sendChatwork, setupSendMessage, sendMessage } from './sendChatwork';
+import CwUtil from './ChatworkUtil';
 
 // UrlFetchAppのMock化
-const mockFetch = jest.fn();
-UrlFetchApp.fetch = mockFetch;
+UrlFetchApp.fetch = jest.fn().mockImplementation(() => {
+  return {
+    getResponseCode: jest.fn().mockReturnValue('200'),
+    getContentText: jest
+      .fn()
+      .mockReturnValue({ message_id: '1484917167420887040' }),
+  };
+});
 
-describe(sendChatwork, () => {
+describe(CwUtil.sendChatwork, () => {
   it('sendChatwork 要素あり', () => {
-    const result = sendChatwork({
+    const result = CwUtil.sendChatwork({
       namedValues: {
         お問い合わせ種類: ['ログインについて'],
         問い合わせ内容: ['2210'],
       },
     });
 
-    expect(result).toBe('');
+    expect(result).toStrictEqual({ message_id: '1484917167420887040' });
   });
 
   it('sendChatwork GoogleFormから異常データインプット 要素あり 空文字', () => {
-    const result = sendChatwork({
+    const result = CwUtil.sendChatwork({
       namedValues: { お問い合わせ種類: [''], 問い合わせ内容: [''] },
     });
 
@@ -25,7 +31,7 @@ describe(sendChatwork, () => {
   });
 
   it('sendChatwork GoogleFormから異常データインプット 要素 お問い合わせ種類のみ', () => {
-    const result = sendChatwork({
+    const result = CwUtil.sendChatwork({
       namedValues: { お問い合わせ種類: ['ログインについて'] },
     });
 
@@ -33,7 +39,7 @@ describe(sendChatwork, () => {
   });
 
   it('sendChatwork GoogleFormから異常データインプット 要素 問い合わせ内容のみ', () => {
-    const result = sendChatwork({
+    const result = CwUtil.sendChatwork({
       namedValues: { 問い合わせ内容: ['問い合わせ内容本文'] },
     });
 
@@ -41,9 +47,9 @@ describe(sendChatwork, () => {
   });
 });
 
-describe(setupSendMessage, () => {
+describe(CwUtil.setupSendMessage, () => {
   it('setupSendMessage ログインについてパターン', () => {
-    const result = setupSendMessage({
+    const result = CwUtil.setupSendMessage({
       kind: 'ログインについて',
       text: '問い合わせ内容本文',
     });
@@ -54,7 +60,7 @@ describe(setupSendMessage, () => {
   });
 
   it('setupSendMessage 料金プランについてパターン', () => {
-    const result = setupSendMessage({
+    const result = CwUtil.setupSendMessage({
       kind: '料金プランについて',
       text: '問い合わせ内容本文',
     });
@@ -65,7 +71,7 @@ describe(setupSendMessage, () => {
   });
 
   it('setupSendMessage その他のお問い合わせパターン', () => {
-    const result = setupSendMessage({
+    const result = CwUtil.setupSendMessage({
       kind: 'その他のお問い合わせ',
       text: '問い合わせ内容本文',
     });
@@ -76,7 +82,7 @@ describe(setupSendMessage, () => {
   });
 
   it('setupSendMessage GoogleFormから異常データインプット お問い合わせ種類 該当なしパターン', () => {
-    const result = setupSendMessage({
+    const result = CwUtil.setupSendMessage({
       kind: '該当なし',
       text: '問い合わせ内容本文',
     });
@@ -85,16 +91,16 @@ describe(setupSendMessage, () => {
   });
 
   it('setupSendMessage GoogleFormから異常データインプット パラメータが空文字パターン', () => {
-    const result = setupSendMessage({ kind: '', text: '' });
+    const result = CwUtil.setupSendMessage({ kind: '', text: '' });
 
     expect(result).toBe('');
   });
 });
 
-describe(sendMessage, () => {
+describe(CwUtil.sendMessage, () => {
   it('sendMessagge ', () => {
-    const res = sendMessage('あいうえお');
+    const res = CwUtil.sendMessage('あいうえお');
 
-    expect(res).toBe('');
+    expect(res).toStrictEqual({ message_id: '1484917167420887040' });
   });
 });

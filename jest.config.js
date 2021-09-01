@@ -5,6 +5,6 @@ module.exports = {
     '^.+\\.ts$': 'ts-jest',
   },
   globals: {
-      "UrlFetchApp": {}
-  }
+    UrlFetchApp: {},
+  },
 };
