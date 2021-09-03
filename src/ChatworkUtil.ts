@@ -4,15 +4,18 @@
  * text : 問い合わせ内容
  */
 interface GoogleFormInfo {
-  kind: string;
+  kind: inquirykind;
   text: string;
 }
+type inquirykind = 'ログインについて' | '料金プランについて' | 'その他のお問い合わせ' | '○○について';
 
 // Chatwork API Token
 const token = '';
 
 // 情報を通知するチャットのルームID
 const roomid = '';
+
+function fail(message: string): never { throw new Error(message); }
 
 export default class CwUtil {
   /**
@@ -26,6 +29,7 @@ export default class CwUtil {
     namedValues: { [x: string]: string[] };
   }): string {
     let res = '';
+
     // 不正値を受け取った場合は処理せず終了する
     if (
       e.namedValues['お問い合わせ種類'] == null ||
@@ -39,7 +43,7 @@ export default class CwUtil {
     // 一次元配列でのインプットとなるので先頭要素を固定で取得する
     // 複数回答のインプットパターンは現状は考慮外とする
     const message: string = CwUtil.setupSendMessage({
-      kind: e.namedValues['お問い合わせ種類'][0],
+      kind: e.namedValues['お問い合わせ種類'][0] as inquirykind,
       text: e.namedValues['問い合わせ内容'][0],
     });
 
@@ -70,8 +74,7 @@ export default class CwUtil {
         message += '[/info]';
         break;
       default:
-        console.log('invalid param kind : ' + params.kind);
-        break;
+        return fail('invalid param kind : ' + params.kind);
     }
 
     return message;
